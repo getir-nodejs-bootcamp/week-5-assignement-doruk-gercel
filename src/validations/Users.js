@@ -35,10 +35,15 @@ const userLogin = Joi.object({
   password: Joi.string().required().min(8),
 });
 
+const userResetPassword = Joi.object({
+  email: Joi.string().email().required().min(3).max(25),
+});
+
 module.exports = {
   createUser,
   createAdminUser,
   userQuery,
   updateUser,
   userLogin,
+  userResetPassword,
 };

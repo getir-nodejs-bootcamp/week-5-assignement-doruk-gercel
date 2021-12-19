@@ -1,18 +1,18 @@
 const express = require("express");
-const { index, create, login } = require("../controllers/Users");
-const { createUser, createAdminUser, userLogin } = require("../validations/Users");
+const { index, create, login, resetPassword} = require("../controllers/Users");
+const { createUser, createAdminUser, userLogin, userResetPassword} = require("../validations/Users");
 const validate = require("../middlewares/validate");
-// const authenticate = require("../middlewares/authenticate");
 const authenticateAdmin = require("../middlewares/authenticateAdmin");
 
 const router = express.Router();
 
+// Normal routes
 router.route("/create-admin-user").post(validate(createAdminUser, "body"), create);
 router.route("/login").post(validate(userLogin, "body"), login);
+router.route("/reset-password").post(validate(userResetPassword, "body"), resetPassword);
 
-//! Admin Stuff.
+// Admin user routes
 router.route("/").get(authenticateAdmin, index);
 router.route("/").post(authenticateAdmin, validate(createUser, "body"), create);
-// router.route("/:typeId").post(validate(userQuery, "query"),validate(createUser, "body"), create);
 
 module.exports = router;

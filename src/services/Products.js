@@ -26,8 +26,6 @@ const findOne = (where) => {
 const updateDoc = (docID, updateData) => {
   return Product.findByIdAndUpdate(docID, updateData, { new: true });
 };
-// const updateDoc = () => {};
-// const deleteDoc = () => {};
 
 module.exports = {
   list,

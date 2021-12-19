@@ -11,8 +11,6 @@ const insert = (data) => {
 const findOne = (where) => {
   return User.findOne(where);
 };
-// const updateDoc = () => {};
-// const deleteDoc = () => {};
 
 module.exports = {
   list,

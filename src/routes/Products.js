@@ -14,6 +14,5 @@ router.route("/:id/add-comment").post(authenticate, validate(schemas.addComment,
 router.route("/").post(authenticateAdmin, validate(schemas.createProduct, "body"), create);
 router.route("/:id").patch(authenticateAdmin, validate(schemas.updateProduct, "body"), update);
 router.route("/:id/add-media").post(authenticateAdmin, addMedia);
-// router.route("/:typeId").post(validate(userQuery, "query"),validate(createUser, "body"), create);
 
 module.exports = router;

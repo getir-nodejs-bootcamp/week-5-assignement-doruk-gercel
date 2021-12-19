@@ -6,8 +6,7 @@ const ProductSchema = new Mongoose.Schema(
     description: String,
     quantity: Number,
     unit_price: Number,
-    category: [String], //! Meyve, Elektronik, Bunun için de bir Model gerçekleştirilmelidir..
-    //! user => isAdmin?
+    category: [String],
     user_id: {
       type: Mongoose.Types.ObjectId,
       ref: "user",

@@ -1,12 +1,13 @@
 const hs = require("http-status");
 const { list, insert, findOne, updateDoc } = require("../services/Products");
 const { checkSecureFile } = require("../scripts/utils/helper");
+const error = require("../definitions/Error");
 const path = require("path");
 
 const index = (req, res) => {
   list()
     .then((itemList) => {
-      if (!itemList) res.status(hs.INTERNAL_SERVER_ERROR).send({ error: "Sorun var.." });
+      if (!itemList) res.status(hs.INTERNAL_SERVER_ERROR).send({ error: error.INTERNAL_ERROR });
       res.status(hs.OK).send(itemList);
     })
     .catch((e) => res.status(hs.INTERNAL_SERVER_ERROR).send(e));
@@ -16,26 +17,26 @@ const create = (req, res) => {
   req.body.user_id = req.user;
   insert(req.body)
     .then((createdDoc) => {
-      if (!createdDoc) res.status(hs.INTERNAL_SERVER_ERROR).send({ error: "Sorun var.." });
+      if (!createdDoc) res.status(hs.INTERNAL_SERVER_ERROR).send({ error: error.INTERNAL_ERROR});
       res.status(hs.OK).send(createdDoc);
     })
     .catch((e) => res.status(hs.INTERNAL_SERVER_ERROR).send(e));
 };
 
 const update = (req, res) => {
-  if (!req.params.id) return res.status(hs.BAD_REQUEST).send({ message: "Eksik bilgi.." });
+  if (!req.params.id) return res.status(hs.BAD_REQUEST).send({ message: error.MISSING_INFO });
   updateDoc(req.params.id, req.body)
     .then((updatedDoc) => {
-      if (!updatedDoc) return res.status(hs.NOT_FOUND).send({ message: "Böyle bir ürün bulunmamaktadır" });
+      if (!updatedDoc) return res.status(hs.NOT_FOUND).send({ message: error.PRODUCT_NOT_EXIST });
       res.status(hs.OK).send(updatedDoc);
     })
     .catch((e) => res.status(hs.INTERNAL_SERVER_ERROR).send(e));
 };
 
 const addComment = (req, res) => {
-  if (!req.params.id) return res.status(hs.BAD_REQUEST).send({ message: "Eksik bilgi.." });
+  if (!req.params.id) return res.status(hs.BAD_REQUEST).send({ message: error.MISSING_INFO });
   findOne({ _id: req.params.id }).then((mainProduct) => {
-    if (!mainProduct) return res.status(hs.NOT_FOUND).send({ message: "Böyle bir ürün bulunmamaktadır" });
+    if (!mainProduct) return res.status(hs.NOT_FOUND).send({ message: error.PRODUCT_NOT_EXIST });
     const comment = {
       ...req.body,
       created_at: new Date(),
@@ -44,7 +45,7 @@ const addComment = (req, res) => {
     mainProduct.comments.push(comment);
     updateDoc(req.params.id, mainProduct)
       .then((updatedDoc) => {
-        if (!updatedDoc) return res.status(hs.NOT_FOUND).send({ message: "Böyle bir ürün bulunmamaktadır" });
+        if (!updatedDoc) return res.status(hs.NOT_FOUND).send({ message: error.PRODUCT_NOT_EXIST });
         res.status(hs.OK).send(updatedDoc);
       })
       .catch((e) => res.status(hs.INTERNAL_SERVER_ERROR).send(e));
@@ -52,9 +53,9 @@ const addComment = (req, res) => {
 };
 
 const addMedia = (req, res) => {
-  if (!req.params.id || !req.files?.file || !checkSecureFile(req?.files?.file?.mimetype)) return res.status(hs.BAD_REQUEST).send({ message: "Eksik bilgi.." });
+  if (!req.params.id || !req.files?.file || !checkSecureFile(req?.files?.file?.mimetype)) return res.status(hs.BAD_REQUEST).send({ message: error.MISSING_INFO });
   findOne({ _id: req.params.id }).then((mainProduct) => {
-    if (!mainProduct) return res.status(hs.NOT_FOUND).send({ message: "Böyle bir ürün bulunmamaktadır" });
+    if (!mainProduct) return res.status(hs.NOT_FOUND).send({ message: error.PRODUCT_NOT_EXIST });
 
     const extension = path.extname(req.files.file.name);
     const fileName = `${mainProduct._id?.toString()}${extension}`;
@@ -65,7 +66,7 @@ const addMedia = (req, res) => {
       mainProduct.media = fileName;
       updateDoc(req.params.id, mainProduct)
         .then((updatedDoc) => {
-          if (!updatedDoc) return res.status(hs.NOT_FOUND).send({ message: "Böyle bir ürün bulunmamaktadır" });
+          if (!updatedDoc) return res.status(hs.NOT_FOUND).send({ message: error.PRODUCT_NOT_EXIST });
           res.status(hs.OK).send(updatedDoc);
         })
         .catch((e) => res.status(hs.INTERNAL_SERVER_ERROR).send(e));

@@ -14,7 +14,6 @@ const generateJWTRefreshToken = (user) => {
 };
 
 const checkSecureFile = (mimeType) => {
-  // "image/png" ""
   return mimeType.includes("image/");
 };
 
